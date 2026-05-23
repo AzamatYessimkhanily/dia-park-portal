@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>DIA Park · Premium redesign preview</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  :root {
+    --dia-green-50:#EDFAF3; --dia-green-100:#D4F3E4; --dia-green-200:#A9E7C9;
+    --dia-green-300:#72D4A6; --dia-green-400:#3FBC7E; --dia-green-500:#1EA05F;
+    --dia-green-600:#15824F; --dia-green-700:#0F6640; --dia-green-800:#0A4D31; --dia-green-900:#063320;
+    --neutral-0:#FFFFFF; --neutral-50:#FAFBFA; --neutral-100:#F5F7F5; --neutral-200:#EDF0EE;
+    --neutral-300:#DFE3E1; --neutral-400:#C4CBC7; --neutral-500:#9AA39D; --neutral-600:#6C7570;
+    --neutral-700:#4A5450; --neutral-800:#2E3633; --neutral-900:#1A211E;
+    --status-success-main:#15824F; --status-success-bg:#DEF5E8;
+    --status-warning-main:#D89614; --status-warning-bg:#FDF5DC;
+    --status-danger-main:#D7263D;  --status-danger-bg:#FDE3E6;
+    --status-info-main:#1E6FE0;    --status-info-bg:#E1ECFC;
+    --shadow-xs:0 1px 2px 0 rgba(15,25,20,.04);
+    --shadow-sm:0 1px 3px 0 rgba(15,25,20,.06), 0 1px 2px -1px rgba(15,25,20,.04);
+    --shadow-md:0 4px 12px -2px rgba(15,25,20,.06), 0 2px 4px -2px rgba(15,25,20,.04);
+    --shadow-brand:0 6px 22px -6px rgba(21,130,79,.28), 0 2px 6px -2px rgba(21,130,79,.16);
+    --font-sans:'Inter',sans-serif;
+    --font-display:'Bricolage Grotesque','Inter',sans-serif;
+    --font-mono:'JetBrains Mono',monospace;
+    --page-bg:var(--neutral-50);
+  }
+  html,body { font-family:var(--font-sans); background:#F5F6F4; color:var(--neutral-900); }
+  .font-display { font-family:var(--font-display); }
+  .font-mono { font-family:var(--font-mono); }
+  .tabular-nums { font-variant-numeric:tabular-nums; font-feature-settings:'tnum' on, 'lnum' on; }
+
+  .dia-card { background:var(--neutral-0); border:1px solid var(--neutral-200); border-radius:14px; box-shadow:var(--shadow-xs); }
+  .dia-eyebrow { font-family:var(--font-mono); font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--neutral-500); }
+  .dia-display-1 { font-family:var(--font-display); font-weight:600; font-size:32px; line-height:1.1; letter-spacing:-0.02em; color:var(--neutral-900); }
+  .dia-display-3 { font-family:var(--font-display); font-weight:600; font-size:18px; line-height:1.2; letter-spacing:-0.01em; color:var(--neutral-900); }
+  .dia-system-chip { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px;
+    background:var(--neutral-100); border:1px solid var(--neutral-200); color:var(--neutral-600);
+    font-size:11px; font-family:var(--font-mono); letter-spacing:0.04em; }
+  .dia-system-chip-dot { width:6px; height:6px; border-radius:999px; background:var(--dia-green-500); box-shadow:0 0 0 3px var(--dia-green-100); }
+
+  .ic { display:inline-block; width:1em; height:1em; vertical-align:-0.125em; flex-shrink:0; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+
+<!-- ─── Reusable: Sidebar mock ────────────────────────────── -->
+<script type="text/babel">
+window.MockSidebar = function MockSidebar({ active = 'Дашборд' }) {
+  const nav = [
+    ['◧','Дашборд'],['☑','Заявки и задачи','12'],['💬','Коммуникация','•'],
+    ['⏱','Смены и журнал'],['🔧','Техническая служба'],['🧹','Клининг'],
+    ['🛡','Охрана'],['👥','Резиденты'],['₸','Финансы'],['✦','ИИ-аналитика','AI'],
+    ['🪪','Сотрудники'],['📄','Документы'],['🔔','Уведомления'],['⚙','Настройки']
+  ];
+  return (
+    <aside className="w-[260px] h-full flex flex-col shrink-0" style={{ background:'var(--neutral-0)', borderRight:'1px solid var(--neutral-200)' }}>
+      <div className="flex items-center gap-3 px-5 h-16 shrink-0" style={{ borderBottom:'1px solid var(--neutral-200)' }}>
+        <img src="dia-holding.png" alt="" className="w-9 h-9 rounded-md object-cover" style={{ boxShadow:'0 1px 2px rgba(15,102,64,.12)' }} />
+        <div className="flex flex-col leading-none">
+          <span className="text-sm font-display font-semibold tracking-tight" style={{ color:'var(--neutral-900)' }}>DIA Park</span>
+          <span className="text-[10px] mt-0.5" style={{ color:'var(--neutral-500)' }}>Корпоративный портал</span>
+        </div>
+      </div>
+      <div className="px-3 pt-3 pb-2">
+        <button className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-left" style={{ border:'1px solid var(--neutral-300)' }}>
+          <div className="flex items-center gap-2 min-w-0">
+            <span style={{ color:'var(--dia-green-600)' }}>⌂</span>
+            <span className="text-xs font-medium truncate" style={{ color:'var(--neutral-800)' }}>Dia Park · Башня А</span>
+          </div>
+          <span className="text-[10px]" style={{ color:'var(--neutral-500)' }}>⌄</span>
+        </button>
+      </div>
+      <nav className="flex-1 overflow-y-auto px-3 py-1 flex flex-col gap-0.5">
+        {nav.map(([icon,label,badge],i) => {
+          const isActive = label === active;
+          return (
+            <div key={i} className="group relative flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer"
+              style={{ background: isActive ? 'var(--dia-green-50)' : 'transparent', color: isActive ? 'var(--dia-green-700)' : 'var(--neutral-700)' }}>
+              {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full" style={{background:'var(--dia-green-600)'}} />}
+              <span className="text-[14px] w-4 text-center" style={{ color: isActive ? 'var(--dia-green-600)' : 'var(--neutral-500)' }}>{icon}</span>
+              <span className="text-[13px] flex-1 truncate" style={{ fontWeight: isActive ? 600 : 400 }}>{label}</span>
+              {badge === '12' && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full font-mono" style={{ background:'var(--status-danger-bg)', color:'var(--status-danger-main)' }}>{badge}</span>}
+              {badge === '•' && <span className="w-2 h-2 rounded-full" style={{ background:'var(--status-info-main)' }} />}
+              {badge === 'AI' && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full text-white font-mono" style={{ background:'var(--dia-green-600)' }}>AI</span>}
+            </div>
+          );
+        })}
+      </nav>
+      <div className="px-3 pb-4 pt-3" style={{ borderTop:'1px solid var(--neutral-200)' }}>
+        <div className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-white" style={{ background:'var(--dia-green-600)' }}>АС</div>
+          <div className="flex flex-col leading-none min-w-0">
+            <span className="text-[13px] font-medium truncate" style={{ color:'var(--neutral-800)' }}>Айгерим Сулейменова</span>
+            <span className="text-[11px] mt-0.5 truncate" style={{ color:'var(--neutral-500)' }}>Управляющий</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+};
+
+window.MockTopBar = function MockTopBar({ crumb = 'Дашборд' }) {
+  return (
+    <div className="h-16 px-6 flex items-center justify-between shrink-0" style={{ background:'var(--neutral-0)', borderBottom:'1px solid var(--neutral-200)' }}>
+      <div className="text-sm">
+        <span style={{ color:'var(--neutral-500)' }}>Главная</span>
+        <span className="mx-1.5" style={{ color:'var(--neutral-400)' }}>/</span>
+        <span style={{ color:'var(--neutral-900)' }}>{crumb}</span>
+      </div>
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background:'var(--neutral-100)' }}>
+          <span style={{ color:'var(--neutral-400)' }}>⌕</span>
+          <span className="text-sm" style={{ color:'var(--neutral-500)' }}>Поиск...</span>
+          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded" style={{ background:'var(--neutral-0)', color:'var(--neutral-500)' }}>⌘K</span>
+        </div>
+        <button className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-[var(--neutral-100)]" style={{ color:'var(--neutral-600)' }}>🔔</button>
+      </div>
+    </div>
+  );
+};
+
+window.PageHeader = function PageHeader({ eyebrow, title, subtitle, meta=[], action, systemNote }) {
+  const toneColor = { default:'var(--neutral-900)', success:'var(--status-success-main)', warning:'var(--status-warning-main)', danger:'var(--status-danger-main)', brand:'var(--dia-green-600)' };
+  return (
+    <header className="flex flex-col gap-5 pb-5 mb-6" style={{ borderBottom:'1px solid var(--neutral-200)' }}>
+      <div className="flex items-start justify-between gap-8">
+        <div className="min-w-0 flex-1">
+          {eyebrow && <div className="dia-eyebrow mb-2.5">{eyebrow}</div>}
+          <h1 className="dia-display-1">{title}</h1>
+          {subtitle && <p className="text-[14px] mt-2 leading-relaxed max-w-2xl" style={{ color:'var(--neutral-600)' }}>{subtitle}</p>}
+        </div>
+        <div className="flex items-start gap-4 shrink-0">
+          {systemNote && <span className="dia-system-chip"><span className="dia-system-chip-dot"/>{systemNote}</span>}
+          {action && <div className="flex items-center gap-2">{action}</div>}
+        </div>
+      </div>
+      {meta.length > 0 && (
+        <div className="flex items-stretch gap-x-8 gap-y-3 flex-wrap">
+          {meta.map((m,i) => (
+            <div key={i} className={`flex items-baseline gap-2.5 ${i>0?'pl-8':''}`} style={i>0 ? { borderLeft:'1px solid var(--neutral-200)' } : undefined}>
+              <span className="text-[22px] font-semibold tabular-nums leading-none font-display" style={{ color: toneColor[m.tone||'default'], letterSpacing:'-0.015em' }}>{m.value}</span>
+              <span className="text-[12px] uppercase" style={{ color:'var(--neutral-500)', letterSpacing:'0.08em' }}>{m.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </header>
+  );
+};
+
+window.Btn = function Btn({ children, kind='primary', icon }) {
+  const styles = {
+    primary: { background:'var(--dia-green-600)', color:'#fff', boxShadow:'var(--shadow-brand)' },
+    outline: { background:'var(--neutral-0)', color:'var(--neutral-800)', border:'1px solid var(--neutral-300)' },
+    ghost: { background:'transparent', color:'var(--neutral-700)' },
+  };
+  return (
+    <button className="h-10 px-4 rounded-lg text-sm font-medium flex items-center gap-2" style={styles[kind]}>
+      {icon && <span>{icon}</span>}{children}
+    </button>
+  );
+};
+</script>
+
+<!-- ─── Residents page ────────────────────────────── -->
+<script type="text/babel">
+window.ResidentsArt = function ResidentsArt() {
+  const residents = [
+    { name:'ТОО Альянс-Trade', initials:'АТ', space:'12 этаж, оф. 1201–1205', area:380, rent:3230000, status:'paid' },
+    { name:'ТОО DataCom', initials:'ДК', space:'12 этаж, оф. 1206–1208', area:220, rent:1870000, status:'overdue' },
+    { name:'ТОО Vertex Group', initials:'ВГ', space:'10–11 этаж', area:540, rent:4590000, status:'paid' },
+    { name:'АО KazFinance', initials:'KZ', space:'8–9 этаж', area:480, rent:4080000, status:'partial' },
+    { name:'ТОО TechHub Almaty', initials:'TH', space:'3–4 этаж', area:620, rent:5270000, status:'paid' },
+    { name:'АО НефтьСервис', initials:'НС', space:'5–6 этаж', area:460, rent:3910000, status:'paid' },
+    { name:'ТОО Логистик Про', initials:'ЛП', space:'7 этаж, оф. 701–704', area:280, rent:2380000, status:'overdue' },
+    { name:'ИП Алиев Консалтинг', initials:'АК', space:'2 этаж, оф. 203', area:85, rent:722500, status:'paid' },
+  ];
+  const stMap = {
+    paid:    { label:'Оплачено',  color:'var(--status-success-main)', bg:'var(--status-success-bg)' },
+    overdue: { label:'Просрочено',color:'var(--status-danger-main)',  bg:'var(--status-danger-bg)' },
+    partial: { label:'Частично',  color:'var(--status-warning-main)', bg:'var(--status-warning-bg)' },
+  };
+  const totalArea = residents.reduce((s,r)=>s+r.area,0);
+  const totalRent = residents.reduce((s,r)=>s+r.rent,0);
+  const overdue = residents.filter(r=>r.status==='overdue').length;
+
+  return (
+    <div className="flex w-full h-full" style={{ background:'var(--page-bg)' }}>
+      <MockSidebar active="Резиденты" />
+      <div className="flex-1 flex flex-col min-w-0">
+        <MockTopBar crumb="Резиденты" />
+        <div className="flex-1 px-8 py-7 overflow-auto">
+          <PageHeader
+            eyebrow="Арендаторы · Башня А"
+            title="Резиденты"
+            subtitle="Компании, арендующие площади объекта — контакты, договора и платёжная дисциплина."
+            systemNote="Обновлено сегодня"
+            meta={[
+              { value: residents.length, label:'компаний' },
+              { value: `${totalArea.toLocaleString('ru-RU')} м²`, label:'занято' },
+              { value: `${(totalRent/1e6).toFixed(1)} млн ₸`, label:'в месяц', tone:'brand' },
+              { value: overdue, label:'с просрочкой', tone:'danger' },
+            ]}
+            action={<Btn icon="+">Добавить резидента</Btn>}
+          />
+
+          {/* Search + filters */}
+          <div className="flex items-center gap-3 mb-4">
+            <div className="relative flex-1 max-w-md">
+              <input className="w-full h-10 pl-9 pr-3 rounded-lg outline-none" placeholder="Поиск по названию или контакту..." style={{ border:'1px solid var(--neutral-300)', background:'var(--neutral-0)' }}/>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{color:'var(--neutral-400)'}}>⌕</span>
+            </div>
+            <Btn kind="outline" icon="≡">Фильтры</Btn>
+          </div>
+
+          <div className="dia-card overflow-hidden">
+            {residents.map((r,i)=>{
+              const s = stMap[r.status];
+              return (
+                <div key={i} className="flex items-center gap-4 p-4 cursor-pointer transition-colors hover:bg-[var(--neutral-50)]"
+                  style={{ borderBottom: i<residents.length-1 ? '1px solid var(--neutral-200)' : 'none' }}>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center text-[14px] font-semibold shrink-0" style={{ background:'var(--dia-green-100)', color:'var(--dia-green-700)' }}>{r.initials}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium truncate" style={{ color:'var(--neutral-900)' }}>{r.name}</span>
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0" style={{ background:s.bg, color:s.color }}>{s.label}</span>
+                    </div>
+                    <div className="flex items-center gap-3 mt-1 text-sm" style={{ color:'var(--neutral-500)' }}>
+                      <span>🏢 {r.space}</span><span>·</span><span>{r.area} м²</span>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="font-semibold font-mono tabular-nums" style={{ color:'var(--neutral-900)' }}>{(r.rent/1000).toLocaleString('ru-RU')} тыс. ₸</div>
+                    <div className="text-xs mt-0.5" style={{ color:'var(--neutral-500)' }}>в месяц</div>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button className="p-2 rounded-lg hover:bg-[var(--neutral-100)]" style={{color:'var(--neutral-500)'}}>📞</button>
+                    <button className="p-2 rounded-lg hover:bg-[var(--neutral-100)]" style={{color:'var(--neutral-500)'}}>✉</button>
+                  </div>
+                  <span style={{color:'var(--neutral-400)'}}>›</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+</script>
+
+<!-- ─── Documents page ────────────────────────────── -->
+<script type="text/babel">
+window.DocumentsArt = function DocumentsArt() {
+  const docs = [
+    { name:'Договор аренды — ТОО Альянс-Trade', cat:'Договоры', size:'2.4 MB', date:'15.01.2024', expires:'15.01.2027', status:'active', tone:'info' },
+    { name:'Договор аренды — ТОО DataCom', cat:'Договоры', size:'1.8 MB', date:'01.03.2024', expires:'01.03.2026', status:'expiring', tone:'info' },
+    { name:'Акт выполненных работ №147', cat:'Акты', size:'156 KB', date:'20.05.2026', status:'active', tone:'brand' },
+    { name:'Счёт на оплату №2026-0542', cat:'Счета', size:'89 KB', date:'18.05.2026', expires:'25.05.2026', status:'active', tone:'warning' },
+    { name:'Инструкция по пожарной безопасности', cat:'Инструкции', size:'4.2 MB', date:'10.01.2026', expires:'10.01.2027', status:'active', tone:'orange' },
+    { name:'Регламент работы охраны', cat:'Регламенты', size:'1.1 MB', date:'05.02.2026', status:'active', tone:'neutral' },
+    { name:'Чек-лист уборки санузлов', cat:'Чек-листы', size:'234 KB', date:'12.03.2026', status:'active', tone:'brand' },
+    { name:'Договор на обслуживание лифтов', cat:'Договоры', size:'3.1 MB', date:'01.06.2025', expires:'01.06.2026', status:'expiring', tone:'info' },
+  ];
+  const cats = ['Все','Договоры','Акты','Счета','Инструкции','Регламенты','Чек-листы','Шаблоны'];
+  const toneMap = {
+    info:{bg:'var(--status-info-bg)',c:'var(--status-info-main)'},
+    brand:{bg:'var(--dia-green-50)',c:'var(--dia-green-600)'},
+    warning:{bg:'var(--status-warning-bg)',c:'var(--status-warning-main)'},
+    orange:{bg:'#FEF0EC',c:'#E25822'},
+    neutral:{bg:'var(--neutral-100)',c:'var(--neutral-600)'},
+  };
+
+  return (
+    <div className="flex w-full h-full" style={{ background:'var(--page-bg)' }}>
+      <MockSidebar active="Документы" />
+      <div className="flex-1 flex flex-col min-w-0">
+        <MockTopBar crumb="Документы" />
+        <div className="flex-1 px-8 py-7 overflow-auto">
+          <PageHeader
+            eyebrow="Документооборот"
+            title="Документы"
+            subtitle="Договоры, акты, регламенты и шаблоны — единая база с автоматическим контролем сроков."
+            systemNote="Архив · obj.A"
+            meta={[
+              { value: 10, label:'всего' },
+              { value: 4, label:'договоров' },
+              { value: 2, label:'истекают', tone:'warning' },
+              { value: 1, label:'счетов и актов' },
+            ]}
+            action={<Btn icon="+">Загрузить документ</Btn>}
+          />
+
+          {/* Warning banner */}
+          <div className="mb-6 p-4 rounded-xl border flex items-center gap-3" style={{ background:'var(--status-warning-bg)', borderColor:'var(--status-warning-main)' }}>
+            <span className="text-[20px]" style={{color:'var(--status-warning-main)'}}>⚠</span>
+            <div>
+              <div className="font-medium text-sm" style={{ color:'var(--status-warning-main)' }}>2 документа истекают в ближайшие 30 дней</div>
+              <div className="text-xs mt-0.5" style={{ color:'var(--neutral-600)' }}>Рекомендуется обновить договоры заранее</div>
+            </div>
+          </div>
+
+          {/* Categories */}
+          <div className="flex items-center gap-2 mb-6 flex-wrap">
+            {cats.map((c,i)=>(
+              <button key={i} className="px-3 py-1.5 rounded-lg text-sm border"
+                style={{
+                  background: i===0?'var(--dia-green-600)':'var(--neutral-0)',
+                  color: i===0?'#fff':'var(--neutral-600)',
+                  borderColor: i===0?'var(--dia-green-600)':'var(--neutral-300)',
+                  fontWeight: i===0?500:400,
+                }}>{c}</button>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            {docs.map((d,i)=>{
+              const t = toneMap[d.tone];
+              return (
+                <div key={i} className="dia-card p-4 cursor-pointer hover:shadow-md transition-shadow" style={{ borderColor: d.status==='expiring' ? 'var(--status-warning-main)' : undefined }}>
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{ background:t.bg, color:t.c }}>📄</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm truncate" style={{ color:'var(--neutral-900)' }}>{d.name}</div>
+                      <div className="flex items-center gap-2 mt-1 text-xs" style={{ color:'var(--neutral-500)' }}>
+                        <span>{d.cat}</span>·<span className="font-mono tabular-nums">{d.size}</span>
+                      </div>
+                    </div>
+                    <button className="p-1.5 text-[var(--neutral-500)]">⋯</button>
+                  </div>
+                  <div className="flex items-center justify-between mt-4 pt-3" style={{ borderTop:'1px solid var(--neutral-200)' }}>
+                    <div className="flex items-center gap-3 text-xs font-mono tabular-nums" style={{ color:'var(--neutral-500)' }}>
+                      <span>📅 {d.date}</span>
+                      {d.expires && <span style={{ color: d.status==='expiring' ? 'var(--status-warning-main)' : 'var(--neutral-500)' }}>⏱ до {d.expires}</span>}
+                    </div>
+                    <div className="flex items-center gap-1 text-[var(--neutral-500)]">
+                      <button className="p-1.5 hover:bg-[var(--neutral-100)] rounded-lg">👁</button>
+                      <button className="p-1.5 hover:bg-[var(--neutral-100)] rounded-lg">↓</button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+</script>
+
+<!-- ─── Cleaning page ────────────────────────────── -->
+<script type="text/babel">
+window.CleaningArt = function CleaningArt() {
+  const zones = [
+    { name:'Холл 1 этажа', status:'completed', time:'08:30', a:'ДО', p:100 },
+    { name:'Санузлы 1-5 этажи', status:'progress', time:'10:00', a:'АМ', p:60 },
+    { name:'Коридоры 6-10 этажи', status:'pending', time:'11:30', a:'ДО', p:0 },
+    { name:'Санузлы 6-10 этажи', status:'pending', time:'13:00', a:'АМ', p:0 },
+    { name:'Холл 14 этажа', status:'pending', time:'14:00', a:'ДО', p:0 },
+    { name:'Паркинг B1', status:'pending', time:'15:30', a:'СТ', p:0 },
+  ];
+  const checklist = [
+    ['Полы вымыты',true],['Мусор вынесен',true],['Зеркала протёрты',true],
+    ['Расходники пополнены',false],['Дезинфекция поверхностей',false],['Фото прикреплено',false]
+  ];
+
+  return (
+    <div className="flex w-full h-full" style={{ background:'var(--page-bg)' }}>
+      <MockSidebar active="Клининг" />
+      <div className="flex-1 flex flex-col min-w-0">
+        <MockTopBar crumb="Клининг" />
+        <div className="flex-1 px-8 py-7 overflow-auto">
+          <PageHeader
+            eyebrow="Эксплуатация · Башня А"
+            title="Клининг"
+            subtitle="Управление графиком уборки, чек-листами и жалобами резидентов."
+            systemNote="Смена · 23 мая"
+            meta={[
+              { value:'1/6', label:'зон выполнено', tone:'brand' },
+              { value:'17%', label:'общий прогресс' },
+              { value:1, label:'новая жалоба', tone:'danger' },
+              { value:2, label:'на смене' },
+            ]}
+            action={<Btn icon="+">Срочная уборка</Btn>}
+          />
+
+          <div className="mb-6 p-5 dia-card">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium" style={{ color:'var(--neutral-700)' }}>Прогресс рабочего дня</span>
+              <span className="text-sm font-semibold tabular-nums font-mono" style={{ color:'var(--dia-green-600)' }}>17%</span>
+            </div>
+            <div className="h-2 w-full rounded-full overflow-hidden" style={{ background:'var(--neutral-200)' }}>
+              <div className="h-full" style={{ width:'17%', background:'var(--dia-green-500)' }} />
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex items-center gap-1 p-1 rounded-lg mb-6 w-fit" style={{ background:'var(--neutral-100)' }}>
+            {['График уборки','Жалобы','Сотрудники'].map((t,i)=>(
+              <button key={i} className="px-3 py-1.5 rounded-md text-sm" style={{
+                background: i===0?'var(--neutral-0)':'transparent',
+                color: i===0?'var(--neutral-900)':'var(--neutral-600)',
+                fontWeight: i===0?500:400, boxShadow: i===0?'var(--shadow-xs)':'none',
+              }}>{t}{i===1 && <span className="ml-1.5 w-2 h-2 inline-block rounded-full align-middle" style={{background:'var(--status-danger-main)'}}/>}</button>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-3 gap-6">
+            <div className="col-span-2">
+              <div className="dia-card overflow-hidden">
+                {zones.map((z,i) => {
+                  const cfg = z.status==='completed' ? {bg:'var(--status-success-bg)',c:'var(--status-success-main)',ic:'✓',label:'Выполнено'} 
+                    : z.status==='progress' ? {bg:'var(--status-warning-bg)',c:'var(--status-warning-main)',ic:'✦',label:'В процессе'} 
+                    : {bg:'var(--neutral-100)',c:'var(--neutral-500)',ic:'⏱',label:'Ожидает'};
+                  return (
+                    <div key={i} className="flex items-center gap-4 p-4" style={{ borderBottom: i<zones.length-1?'1px solid var(--neutral-200)':'none' }}>
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{background:cfg.bg, color:cfg.c}}>{cfg.ic}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium" style={{color:'var(--neutral-900)'}}>{z.name}</div>
+                        <div className="flex items-center gap-3 mt-1 text-xs font-mono tabular-nums" style={{color:'var(--neutral-500)'}}>
+                          <span>⏱ {z.time}</span><span>👤 {z.a}</span>
+                        </div>
+                      </div>
+                      <div className="w-24">
+                        {z.status !== 'pending' ? (
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-[10px]" style={{color:'var(--neutral-500)'}}><span>{cfg.label}</span><span className="font-mono tabular-nums">{z.p}%</span></div>
+                            <div className="h-1.5 rounded-full overflow-hidden" style={{background:'var(--neutral-200)'}}>
+                              <div className="h-full" style={{width:`${z.p}%`, background: z.status==='completed'?'var(--status-success-main)':'var(--status-warning-main)'}}/>
+                            </div>
+                          </div>
+                        ) : <span className="text-xs" style={{color:'var(--neutral-500)'}}>Ожидает</span>}
+                      </div>
+                      <span style={{color:'var(--neutral-400)'}}>›</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="dia-card p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="dia-display-3">Чек-лист: Санузлы 1-5</h2>
+                  <span className="text-xs px-2 py-1 rounded-full" style={{background:'var(--status-warning-bg)',color:'var(--status-warning-main)'}}>В процессе</span>
+                </div>
+                <div className="space-y-3">
+                  {checklist.map(([t,c],i)=>(
+                    <label key={i} className="flex items-center gap-3 cursor-pointer">
+                      <input type="checkbox" defaultChecked={c} className="w-4 h-4 rounded" style={{accentColor:'var(--dia-green-600)'}}/>
+                      <span className="text-sm" style={{ color: c?'var(--neutral-500)':'var(--neutral-700)', textDecoration:c?'line-through':'none' }}>{t}</span>
+                    </label>
+                  ))}
+                </div>
+                <div className="mt-4 pt-4" style={{borderTop:'1px solid var(--neutral-200)'}}>
+                  <button className="w-full h-9 rounded-lg text-sm gap-2 flex items-center justify-center" style={{border:'1px solid var(--neutral-300)',color:'var(--neutral-700)'}}>📷 Добавить фото</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+</script>
+
+<!-- ─── Maintenance page ────────────────────────────── -->
+<script type="text/babel">
+window.MaintenanceArt = function MaintenanceArt() {
+  const tasks = [
+    {id:'DP-1487', t:'Прорыв трубы в туалете 8 этажа', p:'critical', s:'progress', a:'ТБ', due:'2ч 14м', loc:'8 этаж, сан.узел М', overdue:true},
+    {id:'DP-1492', t:'Не работает кондиционер', p:'high', s:'new', a:'АК', due:'4ч', loc:'12 этаж, оф. 1203'},
+    {id:'DP-1488', t:'Замена ламп в коридоре', p:'mid', s:'progress', a:'ТБ', due:'Сегодня', loc:'5 этаж'},
+    {id:'DP-1480', t:'Скрипит дверь на входе', p:'low', s:'done', a:'АК', due:'Выполнено', loc:'Главный вход'},
+    {id:'DP-1475', t:'Проверка электрощитовой', p:'mid', s:'scheduled', a:'ТБ', due:'25.05', loc:'Подвал B1'},
+  ];
+  const pColor = {critical:'#B3001E',high:'#E25822',mid:'#D89614',low:'#3FBC7E'};
+  const pLabel = {critical:'Аварийный',high:'Высокий',mid:'Средний',low:'Низкий'};
+  const pBg = {critical:'var(--status-danger-bg)',high:'#FEF0EC',mid:'var(--status-warning-bg)',low:'var(--status-success-bg)'};
+  const sLabel = {progress:'В работе',new:'Новая',done:'Выполнено',scheduled:'Запланировано'};
+  const sColor = {progress:'var(--status-warning-main)',new:'var(--status-info-main)',done:'var(--status-success-main)',scheduled:'var(--neutral-500)'};
+  const scheduled = [
+    ['ТО кондиционеров 3 этаж','24.05','maintenance'],
+    ['Проверка пожарной сигнализации','26.05','inspection'],
+    ['Замена фильтров вентиляции','28.05','maintenance'],
+    ['Осмотр лифтового оборудования','01.06','inspection'],
+  ];
+  const materials = [
+    ['Труба ПВХ 50мм','12 м','ok'],
+    ['Муфта соединительная','4 шт','low'],
+    ['Герметик сантехнический','2 шт','critical'],
+    ['Лампа LED 12W','24 шт','ok'],
+    ['Фильтр для кондиционера','6 шт','ok'],
+  ];
+
+  return (
+    <div className="flex w-full h-full" style={{background:'var(--page-bg)'}}>
+      <MockSidebar active="Техническая служба"/>
+      <div className="flex-1 flex flex-col min-w-0">
+        <MockTopBar crumb="Техническая служба"/>
+        <div className="flex-1 px-8 py-7 overflow-auto">
+          <PageHeader
+            eyebrow="Инженерные службы"
+            title="Техническая служба"
+            subtitle="Оперативные задачи, плановое ТО и склад расходных материалов."
+            systemNote="Смена · 2 в работе"
+            meta={[
+              {value:5,label:'всего задач'},
+              {value:2,label:'в работе',tone:'warning'},
+              {value:1,label:'аварийных',tone:'danger'},
+              {value:4,label:'плановых ТО'},
+            ]}
+            action={<Btn icon="+">Создать заявку</Btn>}
+          />
+
+          <div className="flex items-center gap-1 p-1 rounded-lg mb-6 w-fit" style={{background:'var(--neutral-100)'}}>
+            {['Мои задачи','Плановое ТО','Материалы'].map((t,i)=>(
+              <button key={i} className="px-3 py-1.5 rounded-md text-sm" style={{
+                background:i===0?'var(--neutral-0)':'transparent',
+                color:i===0?'var(--neutral-900)':'var(--neutral-600)',
+                fontWeight:i===0?500:400, boxShadow:i===0?'var(--shadow-xs)':'none',
+              }}>{t}</button>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-3 gap-6">
+            <div className="col-span-2">
+              <div className="dia-card overflow-hidden">
+                {tasks.map((task,i)=>(
+                  <div key={i} className="flex items-center gap-4 p-4 cursor-pointer hover:bg-[var(--neutral-50)] transition-colors" style={{borderBottom:i<tasks.length-1?'1px solid var(--neutral-200)':'none'}}>
+                    <div className="w-1 h-12 rounded-full" style={{background:pColor[task.p]}}/>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium font-mono" style={{color:'var(--neutral-500)'}}>{task.id}</span>
+                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={{background:pBg[task.p],color:pColor[task.p]}}>{pLabel[task.p]}</span>
+                      </div>
+                      <div className="font-medium mt-1" style={{color:'var(--neutral-900)'}}>{task.t}</div>
+                      <div className="text-xs mt-1" style={{color:'var(--neutral-500)'}}>{task.loc}</div>
+                    </div>
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold" style={{background:'var(--dia-green-100)',color:'var(--dia-green-700)'}}>{task.a}</div>
+                    <div className="text-right">
+                      <div className="text-xs font-medium font-mono tabular-nums" style={{color: task.overdue?'var(--status-danger-main)':'var(--neutral-600)'}}>{task.due}</div>
+                      <div className="text-[10px] mt-0.5" style={{color:sColor[task.s]}}>{sLabel[task.s]}</div>
+                    </div>
+                    <span style={{color:'var(--neutral-400)'}}>›</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="dia-card p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <span style={{color:'var(--dia-green-600)'}}>📅</span>
+                  <h2 className="dia-display-3">Плановое ТО</h2>
+                </div>
+                <div className="space-y-3">
+                  {scheduled.map(([t,d,k],i)=>(
+                    <div key={i} className="flex items-center justify-between py-2">
+                      <div>
+                        <div className="text-sm" style={{color:'var(--neutral-700)'}}>{t}</div>
+                        <div className="text-xs mt-0.5" style={{color:'var(--neutral-500)'}}>{k==='maintenance'?'Обслуживание':'Проверка'}</div>
+                      </div>
+                      <span className="text-xs font-medium font-mono tabular-nums" style={{color:'var(--neutral-600)'}}>{d}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="dia-card p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <span style={{color:'var(--status-warning-main)'}}>📦</span>
+                  <h2 className="dia-display-3">Склад материалов</h2>
+                </div>
+                <div className="space-y-3">
+                  {materials.map(([n,s,st],i)=>(
+                    <div key={i} className="flex items-center justify-between">
+                      <span className="text-sm" style={{color:'var(--neutral-700)'}}>{n}</span>
+                      <span className="text-xs font-medium font-mono tabular-nums" style={{
+                        color: st==='critical'?'var(--status-danger-main)':st==='low'?'var(--status-warning-main)':'var(--neutral-600)'
+                      }}>{s}</span>
+                    </div>
+                  ))}
+                </div>
+                <button className="w-full mt-4 h-9 rounded-lg text-sm" style={{border:'1px solid var(--neutral-300)',color:'var(--neutral-700)'}}>Заказать материалы</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+</script>
+
+<!-- ─── Notifications page ────────────────────────────── -->
+<script type="text/babel">
+window.NotificationsArt = function NotificationsArt() {
+  const list = [
+    { type:'urgent', t:'Аварийная заявка DP-1487', m:'Прорыв трубы в туалете 8 этажа. Требуется немедленное реагирование.', time:'5 мин назад', read:false, icon:'⚠'},
+    { type:'task', t:'Назначена новая задача', m:'Вам назначена задача DP-1492: Не работает кондиционер (12 этаж)', time:'15 мин назад', read:false, icon:'✓'},
+    { type:'message', t:'Новое сообщение в чате', m:'Тимур Бекмамбетов: На месте. Труба лопнула на стыке — нужна замена...', time:'32 мин назад', read:false, icon:'💬'},
+    { type:'finance', t:'Просроченная оплата', m:'ТОО DataCom: задолженность 1 870 000 ₸, просрочка 12 дней', time:'1 час назад', read:true, icon:'$'},
+    { type:'info', t:'Еженедельный отчёт готов', m:'ИИ-аналитика сформировала отчёт за неделю 15–22 мая', time:'2 часа назад', read:true, icon:'ⓘ'},
+    { type:'security', t:'Инцидент безопасности', m:'Зафиксирована попытка прохода без пропуска (главный вход)', time:'3 часа назад', read:true, icon:'🛡'},
+    { type:'task', t:'Задача выполнена', m:'DP-1480: Скрипит дверь на входе — закрыта Арманом Касымовым', time:'4 часа назад', read:true, icon:'✓'},
+  ];
+  const styles = {
+    urgent:{bg:'var(--status-danger-bg)',c:'var(--status-danger-main)'},
+    task:{bg:'var(--dia-green-50)',c:'var(--dia-green-600)'},
+    message:{bg:'var(--status-info-bg)',c:'var(--status-info-main)'},
+    finance:{bg:'var(--status-warning-bg)',c:'var(--status-warning-main)'},
+    info:{bg:'var(--neutral-100)',c:'var(--neutral-600)'},
+    security:{bg:'#FEF0EC',c:'#E25822'},
+  };
+  return (
+    <div className="flex w-full h-full" style={{background:'var(--page-bg)'}}>
+      <MockSidebar active="Уведомления"/>
+      <div className="flex-1 flex flex-col min-w-0">
+        <MockTopBar crumb="Уведомления"/>
+        <div className="flex-1 px-8 py-7 overflow-auto max-w-5xl">
+          <PageHeader
+            eyebrow="Лента событий"
+            title="Уведомления"
+            subtitle="Аварии, финансы, коммуникация, отчёты — всё важное из инструментов портала в одном потоке."
+            systemNote="Реальное время"
+            meta={[
+              {value:10, label:'всего'},
+              {value:3, label:'непрочитанных', tone:'brand'},
+              {value:1, label:'срочных', tone:'danger'},
+            ]}
+            action={<><Btn kind="outline" icon="✓">Прочитать все</Btn><Btn kind="outline" icon="⚙">Настроить</Btn></>}
+          />
+
+          <div className="flex items-center gap-1 p-1 rounded-lg mb-6 w-fit" style={{background:'var(--neutral-100)'}}>
+            {['Все','Непрочитанные','Задачи','Сообщения','Финансы'].map((t,i)=>(
+              <button key={i} className="px-3 py-1.5 rounded-md text-sm flex items-center gap-1.5" style={{
+                background:i===0?'var(--neutral-0)':'transparent',
+                color:i===0?'var(--neutral-900)':'var(--neutral-600)',
+                fontWeight:i===0?500:400, boxShadow:i===0?'var(--shadow-xs)':'none',
+              }}>
+                {t}
+                {i===1 && <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full text-white font-mono tabular-nums" style={{background:'var(--status-danger-main)'}}>3</span>}
+              </button>
+            ))}
+          </div>
+
+          <div className="dia-card overflow-hidden">
+            {list.map((n,i)=>{
+              const s = styles[n.type];
+              return (
+                <div key={i} className="flex items-start gap-4 p-4 cursor-pointer hover:bg-[var(--neutral-50)] transition-colors"
+                  style={{borderBottom: i<list.length-1?'1px solid var(--neutral-200)':'none', background: n.read?'transparent':'var(--dia-green-50)'}}>
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{background:s.bg,color:s.c}}>{n.icon}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm" style={{color:'var(--neutral-900)'}}>{n.t}</span>
+                      {!n.read && <span className="w-2 h-2 rounded-full" style={{background:'var(--dia-green-600)'}}/>}
+                    </div>
+                    <p className="text-sm mt-1" style={{color:'var(--neutral-600)'}}>{n.m}</p>
+                    <span className="text-xs mt-2 block font-mono tabular-nums" style={{color:'var(--neutral-500)'}}>{n.time}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+</script>
+
+<!-- ─── Canvas root ────────────────────────────── -->
+<script type="text/babel">
+const { DesignCanvas, DCSection, DCArtboard } = window;
+
+function App() {
+  return (
+    <DesignCanvas
+      title="DIA Park · Premium refresh"
+      subtitle="Каждый раздел приведён к единому языку: PageHeader с метриками, премиум-карточки с тенями, моноширинная типографика для чисел, фирменный знак в ключевых точках. Кликни на артборд чтобы открыть на весь экран."
+    >
+      <DCSection id="ops" title="Эксплуатация и службы">
+        <DCArtboard id="cleaning" label="Клининг · 1440 × 940" width={1440} height={940}><CleaningArt/></DCArtboard>
+        <DCArtboard id="maint" label="Техническая служба · 1440 × 940" width={1440} height={940}><MaintenanceArt/></DCArtboard>
+      </DCSection>
+
+      <DCSection id="commercial" title="Коммерция и документы">
+        <DCArtboard id="residents" label="Резиденты · 1440 × 940" width={1440} height={940}><ResidentsArt/></DCArtboard>
+        <DCArtboard id="docs" label="Документы · 1440 × 940" width={1440} height={940}><DocumentsArt/></DCArtboard>
+      </DCSection>
+
+      <DCSection id="comms" title="Коммуникация и лента">
+        <DCArtboard id="notifs" label="Уведомления · 1440 × 940" width={1440} height={940}><NotificationsArt/></DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

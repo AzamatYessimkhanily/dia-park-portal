@@ -1,0 +1,367 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* ── DIA Park Design Tokens ── */
+
+  /* Brand Green */
+  --dia-green-50:  #EDFAF3;
+  --dia-green-100: #D4F3E4;
+  --dia-green-200: #A9E7C9;
+  --dia-green-300: #72D4A6;
+  --dia-green-400: #3FBC7E;
+  --dia-green-500: #1EA05F;
+  --dia-green-600: #15824F;
+  --dia-green-700: #0F6640;
+  --dia-green-800: #0A4D31;
+  --dia-green-900: #063320;
+
+  /* Neutrals (warm green-grey) */
+  --neutral-0:   #FFFFFF;
+  --neutral-50:  #FAFBFA;
+  --neutral-100: #F5F7F5;
+  --neutral-200: #EDF0EE;
+  --neutral-300: #DFE3E1;
+  --neutral-400: #C4CBC7;
+  --neutral-500: #9AA39D;
+  --neutral-600: #6C7570;
+  --neutral-700: #4A5450;
+  --neutral-800: #2E3633;
+  --neutral-900: #1A211E;
+
+  /* Status colours */
+  --status-success-main: #15824F;
+  --status-success-bg:   #DEF5E8;
+  --status-warning-main: #D89614;
+  --status-warning-bg:   #FDF5DC;
+  --status-danger-main:  #D7263D;
+  --status-danger-bg:    #FDE3E6;
+  --status-info-main:    #1E6FE0;
+  --status-info-bg:      #E1ECFC;
+  --status-closed-main:  #6C7570;
+  --status-closed-bg:    #EDF0EE;
+
+  /* Priority */
+  --priority-low:      #3FBC7E;
+  --priority-mid:      #D89614;
+  --priority-high:     #E25822;
+  --priority-critical: #B3001E;
+
+  /* AI block */
+  --ai-bg: #0A2E1F;
+
+  /* Page background */
+  --page-bg: var(--neutral-50);
+
+  /* shadcn semantic tokens → mapped to DIA tokens */
+  --background:        var(--neutral-50);
+  --foreground:        var(--neutral-900);
+  --card:              var(--neutral-0);
+  --card-foreground:   var(--neutral-900);
+  --popover:           var(--neutral-0);
+  --popover-foreground: var(--neutral-900);
+  --primary:           var(--dia-green-600);
+  --primary-foreground: var(--neutral-0);
+  --secondary:         var(--neutral-100);
+  --secondary-foreground: var(--neutral-700);
+  --muted:             var(--neutral-100);
+  --muted-foreground:  var(--neutral-500);
+  --accent:            var(--dia-green-50);
+  --accent-foreground: var(--dia-green-700);
+  --destructive:       var(--status-danger-main);
+  --destructive-foreground: var(--neutral-0);
+  --border:            var(--neutral-300);
+  --input:             var(--neutral-300);
+  --ring:              var(--dia-green-600);
+
+  --radius: 0.5rem;
+
+  --sidebar:                  var(--neutral-0);
+  --sidebar-foreground:       var(--neutral-800);
+  --sidebar-primary:          var(--dia-green-600);
+  --sidebar-primary-foreground: var(--neutral-0);
+  --sidebar-accent:           var(--dia-green-50);
+  --sidebar-accent-foreground: var(--dia-green-700);
+  --sidebar-border:           var(--neutral-200);
+  --sidebar-ring:             var(--dia-green-600);
+
+  /* Data-viz */
+  --chart-1: #15824F;
+  --chart-2: #D7263D;
+  --chart-3: #1E6FE0;
+  --chart-4: #D89614;
+  --chart-5: #E25822;
+  --chart-6: #7C3AED;
+  --chart-7: #0891B2;
+  --chart-8: #4ADE80;
+
+  /* Page background */
+  --page-bg: var(--neutral-50);
+
+  /* ── Premium shadows & elevation ── */
+  --shadow-xs:    0 1px 2px 0 rgba(15, 25, 20, 0.04);
+  --shadow-sm:    0 1px 3px 0 rgba(15, 25, 20, 0.06), 0 1px 2px -1px rgba(15, 25, 20, 0.04);
+  --shadow-md:    0 4px 12px -2px rgba(15, 25, 20, 0.06), 0 2px 4px -2px rgba(15, 25, 20, 0.04);
+  --shadow-lg:    0 12px 28px -8px rgba(15, 25, 20, 0.10), 0 4px 12px -4px rgba(15, 25, 20, 0.06);
+  --shadow-focus: 0 0 0 4px rgba(21, 130, 79, 0.10);
+  --shadow-brand: 0 6px 22px -6px rgba(21, 130, 79, 0.28), 0 2px 6px -2px rgba(21, 130, 79, 0.16);
+
+  /* Spacing scale used across premium components */
+  --page-px: 32px;
+  --page-py: 28px;
+}
+
+/* Dark Mode */
+.dark {
+  /* Neutrals inverted */
+  --neutral-0:   #1A211E;
+  --neutral-50:  #1E2622;
+  --neutral-100: #252D29;
+  --neutral-200: #2E3633;
+  --neutral-300: #3A4340;
+  --neutral-400: #4A5450;
+  --neutral-500: #6C7570;
+  --neutral-600: #9AA39D;
+  --neutral-700: #C4CBC7;
+  --neutral-800: #EDF0EE;
+  --neutral-900: #FAFBFA;
+
+  /* Brand Green (slightly brighter for dark mode) */
+  --dia-green-50:  #0F2A1E;
+  --dia-green-100: #153525;
+  --dia-green-200: #1A4430;
+  --dia-green-300: #1F5A40;
+  --dia-green-400: #2A7D56;
+  --dia-green-500: #3FBC7E;
+  --dia-green-600: #4FCF8D;
+  --dia-green-700: #72D4A6;
+  --dia-green-800: #A9E7C9;
+  --dia-green-900: #D4F3E4;
+
+  /* Status colours - adjusted for dark */
+  --status-success-main: #4FCF8D;
+  --status-success-bg:   #153525;
+  --status-warning-main: #F5B942;
+  --status-warning-bg:   #3D3520;
+  --status-danger-main:  #F06B7D;
+  --status-danger-bg:    #3D252A;
+  --status-info-main:    #5FA8F5;
+  --status-info-bg:      #1E2D3D;
+  --status-closed-main:  #9AA39D;
+  --status-closed-bg:    #2E3633;
+
+  /* Priority - brighter for dark mode */
+  --priority-low:      #4FCF8D;
+  --priority-mid:      #F5B942;
+  --priority-high:     #F5884A;
+  --priority-critical: #F06B7D;
+
+  /* AI block */
+  --ai-bg: #0A1F15;
+
+  /* Page background */
+  --page-bg: #1A211E;
+
+  /* shadcn semantic tokens for dark mode */
+  --background:        #1A211E;
+  --foreground:        #FAFBFA;
+  --card:              #1E2622;
+  --card-foreground:   #FAFBFA;
+  --popover:           #1E2622;
+  --popover-foreground: #FAFBFA;
+  --primary:           #4FCF8D;
+  --primary-foreground: #1A211E;
+  --secondary:         #252D29;
+  --secondary-foreground: #C4CBC7;
+  --muted:             #252D29;
+  --muted-foreground:  #9AA39D;
+  --accent:            #153525;
+  --accent-foreground: #72D4A6;
+  --destructive:       #F06B7D;
+  --destructive-foreground: #1A211E;
+  --border:            #3A4340;
+  --input:             #3A4340;
+  --ring:              #4FCF8D;
+
+  --sidebar:                  #1E2622;
+  --sidebar-foreground:       #EDF0EE;
+  --sidebar-primary:          #4FCF8D;
+  --sidebar-primary-foreground: #1A211E;
+  --sidebar-accent:           #153525;
+  --sidebar-accent-foreground: #72D4A6;
+  --sidebar-border:           #2E3633;
+  --sidebar-ring:             #4FCF8D;
+}
+
+@theme inline {
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: 'cv11', 'ss01', 'ss03';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Premium selection */
+  ::selection {
+    background: var(--dia-green-100);
+    color: var(--dia-green-800);
+  }
+  /* Tabular numerics — used everywhere we show counts, money, dates */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' on, 'lnum' on;
+  }
+  /* Scrollbars in app shell */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--neutral-300);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--neutral-400); background-clip: padding-box; border: 2px solid transparent; }
+  ::-webkit-scrollbar-track { background: transparent; }
+}
+
+@layer components {
+  /* ── Premium card primitives ──
+     Use .dia-card for elevated content blocks. Borders subtle, shadow soft. */
+  .dia-card {
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-200);
+    border-radius: 14px;
+    box-shadow: var(--shadow-xs);
+  }
+  .dia-card-flat {
+    background: var(--neutral-0);
+    border: 1px solid var(--neutral-200);
+    border-radius: 14px;
+  }
+  .dia-card-hover {
+    transition: box-shadow .18s ease, border-color .18s ease, transform .18s ease;
+  }
+  .dia-card-hover:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--neutral-300);
+  }
+
+  /* Subtle eyebrow / overline used in PageHeader */
+  .dia-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--neutral-500);
+  }
+
+  /* Display headline scale for section titles */
+  .dia-display-1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--neutral-900);
+  }
+  .dia-display-2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: var(--neutral-900);
+  }
+  .dia-display-3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--neutral-900);
+  }
+
+  /* Focus ring for interactive cards / tab triggers */
+  .dia-focusable:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+  }
+
+  /* Subtle 'system' chip used near page headers and footers */
+  .dia-system-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-200);
+    color: var(--neutral-600);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+  }
+  .dia-system-chip-dot {
+    width: 6px; height: 6px; border-radius: 999px; background: var(--dia-green-500);
+    box-shadow: 0 0 0 3px var(--dia-green-100);
+  }
+}
+
+/* Dark mode overrides for common Tailwind color classes */
+.dark .bg-white {
+  background-color: var(--neutral-0) !important;
+}
+
+.dark .text-gray-900,
+.dark .text-slate-900,
+.dark .text-neutral-900,
+.dark .text-zinc-900 {
+  color: var(--neutral-900) !important;
+}
