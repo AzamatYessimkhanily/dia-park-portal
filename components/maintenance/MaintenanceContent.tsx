@@ -2,21 +2,24 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { 
-  Wrench,
+import {
   Calendar,
-  Clock,
-  AlertTriangle,
-  CheckCircle2,
   Package,
   ChevronRight,
   Plus,
-  Filter,
+  Wind,
+  Zap,
+  Droplets,
+  Flame,
+  ArrowUpDown,
+  Activity,
+  CheckCircle2,
+  AlertTriangle,
+  Clock,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Progress } from '@/components/ui/progress'
 import { PageHeader } from '@/components/dashboard/PageHeader'
 
 const tasks = [
@@ -42,6 +45,76 @@ const materials = [
   { name: 'Фильтр для кондиционера', stock: 6, unit: 'шт', status: 'ok' },
 ]
 
+// Equipment health data
+const equipment = [
+  {
+    id: 'hvac',
+    icon: Wind,
+    label: 'Кондиционирование',
+    units: 12,
+    ok: 9,
+    warning: 2,
+    critical: 1,
+    lastCheck: '22.05, 08:00',
+    note: 'Юнит 3-A требует диагностики',
+  },
+  {
+    id: 'elec',
+    icon: Zap,
+    label: 'Электроснабжение',
+    units: 4,
+    ok: 4,
+    warning: 0,
+    critical: 0,
+    lastCheck: '22.05, 07:30',
+    note: 'Все щитовые в норме',
+  },
+  {
+    id: 'lift',
+    icon: ArrowUpDown,
+    label: 'Лифтовое хозяйство',
+    units: 3,
+    ok: 2,
+    warning: 1,
+    critical: 0,
+    lastCheck: '21.05, 18:00',
+    note: 'Лифт №2 на плановом ТО',
+  },
+  {
+    id: 'water',
+    icon: Droplets,
+    label: 'Водоснабжение',
+    units: 6,
+    ok: 6,
+    warning: 0,
+    critical: 0,
+    lastCheck: '22.05, 06:45',
+    note: 'Давление в норме',
+  },
+  {
+    id: 'fire',
+    icon: Flame,
+    label: 'Пожарная безопасность',
+    units: 28,
+    ok: 27,
+    warning: 1,
+    critical: 0,
+    lastCheck: '20.05, 10:00',
+    note: 'Датчик B2-14 на замену',
+  },
+  {
+    id: 'vent',
+    icon: Activity,
+    label: 'Вентиляция',
+    units: 8,
+    ok: 8,
+    warning: 0,
+    critical: 0,
+    lastCheck: '22.05, 07:00',
+    note: 'Все системы в норме',
+  },
+]
+
 const priorityStyles: Record<string, { color: string; bg: string; label: string }> = {
   critical: { color: 'var(--priority-critical)', bg: 'var(--status-danger-bg)', label: 'Аварийный' },
   high: { color: 'var(--priority-high)', bg: '#FEF0EC', label: 'Высокий' },
@@ -54,6 +127,96 @@ const statusStyles: Record<string, { color: string; label: string }> = {
   in_progress: { color: 'var(--status-warning-main)', label: 'В работе' },
   completed: { color: 'var(--status-success-main)', label: 'Выполнено' },
   scheduled: { color: 'var(--neutral-500)', label: 'Запланировано' },
+}
+
+function EquipmentHealthGrid() {
+  return (
+    <div className="dia-card p-5 mb-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Activity size={16} strokeWidth={1.5} style={{ color: 'var(--dia-green-600)' }} />
+          <h2 className="font-semibold text-[14px]" style={{ color: 'var(--neutral-900)', fontFamily: 'var(--font-display)' }}>
+            Состояние инженерных систем
+          </h2>
+        </div>
+        <div className="flex items-center gap-3 text-[10px]" style={{ color: 'var(--neutral-500)' }}>
+          {[
+            { color: 'var(--status-success-main)', label: 'Норма' },
+            { color: 'var(--status-warning-main)', label: 'Внимание' },
+            { color: 'var(--status-danger-main)', label: 'Авария' },
+          ].map(s => (
+            <div key={s.label} className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full" style={{ background: s.color }} />
+              {s.label}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        {equipment.map((eq) => {
+          const Icon = eq.icon
+          const hasIssue = eq.critical > 0 || eq.warning > 0
+          const statusColor = eq.critical > 0
+            ? 'var(--status-danger-main)'
+            : eq.warning > 0
+              ? 'var(--status-warning-main)'
+              : 'var(--status-success-main)'
+          const statusBg = eq.critical > 0
+            ? 'var(--status-danger-bg)'
+            : eq.warning > 0
+              ? 'var(--status-warning-bg)'
+              : 'var(--status-success-bg)'
+          const StatusIcon = eq.critical > 0 ? AlertTriangle : eq.warning > 0 ? Clock : CheckCircle2
+
+          return (
+            <div
+              key={eq.id}
+              className="rounded-xl p-4 cursor-pointer transition-all hover:shadow-md"
+              style={{
+                background: hasIssue ? statusBg : 'var(--neutral-50)',
+                border: `1px solid ${hasIssue ? statusColor + '55' : 'var(--neutral-200)'}`,
+              }}
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div
+                  className="w-9 h-9 rounded-lg flex items-center justify-center"
+                  style={{ background: statusColor + '18' }}
+                >
+                  <Icon size={16} strokeWidth={1.5} style={{ color: statusColor }} />
+                </div>
+                <StatusIcon size={14} strokeWidth={1.5} style={{ color: statusColor }} />
+              </div>
+
+              <p className="text-[13px] font-semibold mb-1" style={{ color: 'var(--neutral-900)' }}>
+                {eq.label}
+              </p>
+
+              {/* Unit dots */}
+              <div className="flex items-center gap-1 mb-2 flex-wrap">
+                {Array.from({ length: eq.ok }).map((_, i) => (
+                  <span key={`ok-${i}`} className="w-2 h-2 rounded-full" style={{ background: 'var(--status-success-main)' }} />
+                ))}
+                {Array.from({ length: eq.warning }).map((_, i) => (
+                  <span key={`warn-${i}`} className="w-2 h-2 rounded-full" style={{ background: 'var(--status-warning-main)' }} />
+                ))}
+                {Array.from({ length: eq.critical }).map((_, i) => (
+                  <span key={`crit-${i}`} className="w-2 h-2 rounded-full" style={{ background: 'var(--status-danger-main)' }} />
+                ))}
+              </div>
+
+              <p className="text-[11px]" style={{ color: 'var(--neutral-500)' }}>
+                {eq.note}
+              </p>
+              <p className="text-[10px] mt-1" style={{ color: 'var(--neutral-400)', fontFamily: 'var(--font-mono)' }}>
+                Проверено: {eq.lastCheck}
+              </p>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
 }
 
 export function MaintenanceContent() {
@@ -69,7 +232,7 @@ export function MaintenanceContent() {
         eyebrow="Инженерные службы"
         title="Техническая служба"
         subtitle="Оперативные задачи, плановое ТО и склад расходных материалов."
-        systemNote={`Смена · ${tasks.filter(t => t.status === 'in_progress').length} в работе`}
+        systemNote={`Смена · ${inProgressCount} в работе`}
         meta={[
           { value: tasks.length, label: 'всего задач' },
           { value: inProgressCount, label: 'в работе', tone: 'warning' },
@@ -83,6 +246,9 @@ export function MaintenanceContent() {
           </Button>
         }
       />
+
+      {/* Equipment Health Grid */}
+      <EquipmentHealthGrid />
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
@@ -109,7 +275,7 @@ export function MaintenanceContent() {
                   style={{ borderBottom: idx < tasks.length - 1 ? '1px solid var(--neutral-200)' : 'none' }}
                 >
                   <div className="w-1 h-12 rounded-full shrink-0" style={{ background: priority.color }} />
-                  
+
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-medium" style={{ color: 'var(--neutral-500)', fontFamily: 'var(--font-mono)' }}>{task.id}</span>
@@ -128,7 +294,7 @@ export function MaintenanceContent() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="text-right">
-                      <div 
+                      <div
                         className="text-xs font-medium"
                         style={{ color: isOverdue ? 'var(--status-danger-main)' : 'var(--neutral-600)', fontFamily: 'var(--font-mono)' }}
                       >
@@ -155,7 +321,7 @@ export function MaintenanceContent() {
             </div>
             <div className="space-y-3">
               {scheduled.map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between py-2">
+                <div key={idx} className="flex items-center justify-between py-2" style={{ borderBottom: idx < scheduled.length - 1 ? '1px solid var(--neutral-100)' : 'none' }}>
                   <div>
                     <div className="text-sm" style={{ color: 'var(--neutral-700)' }}>{item.title}</div>
                     <div className="text-xs mt-0.5" style={{ color: 'var(--neutral-500)' }}>
@@ -179,11 +345,21 @@ export function MaintenanceContent() {
             <div className="space-y-3">
               {materials.map((item, idx) => (
                 <div key={idx} className="flex items-center justify-between">
-                  <span className="text-sm" style={{ color: 'var(--neutral-700)' }}>{item.name}</span>
-                  <span 
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="w-2 h-2 rounded-full shrink-0"
+                      style={{
+                        background: item.status === 'critical' ? 'var(--status-danger-main)'
+                          : item.status === 'low' ? 'var(--status-warning-main)'
+                          : 'var(--status-success-main)',
+                      }}
+                    />
+                    <span className="text-sm" style={{ color: 'var(--neutral-700)' }}>{item.name}</span>
+                  </div>
+                  <span
                     className="text-xs font-medium"
-                    style={{ 
-                      color: item.status === 'critical' ? 'var(--status-danger-main)' : 
+                    style={{
+                      color: item.status === 'critical' ? 'var(--status-danger-main)' :
                              item.status === 'low' ? 'var(--status-warning-main)' : 'var(--neutral-600)',
                       fontFamily: 'var(--font-mono)'
                     }}

@@ -80,14 +80,59 @@ export function CleaningContent() {
         }
       />
 
-      {/* Progress Bar */}
-      <div className="mb-6 p-5 dia-card flex items-center gap-5">
-        <div className="flex-1">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium" style={{ color: 'var(--neutral-700)' }}>Прогресс рабочего дня</span>
-            <span className="text-sm font-semibold tabular-nums" style={{ color: 'var(--dia-green-600)', fontFamily: 'var(--font-mono)' }}>{totalProgress}%</span>
+      {/* Progress + Floor Grid */}
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4">
+        {/* Progress bar card */}
+        <div className="p-5 dia-card flex flex-col justify-between gap-4">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium" style={{ color: 'var(--neutral-700)' }}>Прогресс рабочего дня</span>
+              <span className="text-sm font-semibold" style={{ color: 'var(--dia-green-600)', fontFamily: 'var(--font-mono)' }}>{totalProgress}%</span>
+            </div>
+            <Progress value={totalProgress} className="h-2" />
           </div>
-          <Progress value={totalProgress} className="h-2" />
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { label: 'Выполнено', value: completedZones, color: 'var(--status-success-main)', bg: 'var(--status-success-bg)' },
+              { label: 'В процессе', value: zones.filter(z => z.status === 'in_progress').length, color: 'var(--status-warning-main)', bg: 'var(--status-warning-bg)' },
+              { label: 'Ожидает', value: zones.filter(z => z.status === 'pending').length, color: 'var(--neutral-500)', bg: 'var(--neutral-100)' },
+            ].map(s => (
+              <div key={s.label} className="rounded-lg p-3 text-center" style={{ background: s.bg }}>
+                <div className="text-xl font-bold" style={{ color: s.color, fontFamily: 'var(--font-mono)' }}>{s.value}</div>
+                <div className="text-[11px] mt-0.5" style={{ color: s.color }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Floor zone mini-grid */}
+        <div className="p-5 dia-card min-w-[240px]">
+          <p className="text-[11px] font-medium uppercase tracking-[0.08em] mb-3" style={{ color: 'var(--neutral-500)', fontFamily: 'var(--font-mono)' }}>
+            Статус по зонам
+          </p>
+          <div className="grid grid-cols-2 gap-1.5">
+            {[
+              { label: 'Холл 1 эт.', st: 'completed' },
+              { label: 'Сан. 1–5', st: 'in_progress' },
+              { label: 'Кор. 6–10', st: 'pending' },
+              { label: 'Сан. 6–10', st: 'pending' },
+              { label: 'Холл 14 эт.', st: 'pending' },
+              { label: 'Паркинг B1', st: 'pending' },
+              { label: 'Конф. залы', st: 'completed' },
+              { label: 'Лестницы', st: 'completed' },
+            ].map((z, i) => {
+              const s = statusStyles[z.st]
+              return (
+                <div
+                  key={i}
+                  className="rounded-md px-2 py-1.5 text-[11px] font-medium"
+                  style={{ background: s.bg, color: s.color }}
+                >
+                  {z.label}
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
 

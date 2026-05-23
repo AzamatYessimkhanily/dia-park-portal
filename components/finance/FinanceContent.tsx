@@ -31,7 +31,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend,
   Brush,
   ComposedChart,
   Bar,
@@ -120,6 +119,22 @@ const expectedPayments = [
   { company: "ИП Ахметов Б.Т.", amount: 380000, date: "29 мая", status: "pending" },
   { company: "ТОО \"Логистик Плюс\"", amount: 720000, date: "30 мая", status: "probable" },
   { company: "ТОО \"Астана Групп\"", amount: 950000, date: "31 мая", status: "pending" },
+]
+
+// Year-over-year monthly comparison
+const yoyData = [
+  { month: 'Янв', y2025: 18.2, y2026: 21.4 },
+  { month: 'Фев', y2025: 17.8, y2026: 20.9 },
+  { month: 'Мар', y2025: 20.1, y2026: 22.8 },
+  { month: 'Апр', y2025: 21.5, y2026: 24.1 },
+  { month: 'Май', y2025: 19.6, y2026: 24.8 },
+  { month: 'Июн', y2025: 22.3, y2026: null },
+  { month: 'Июл', y2025: 23.8, y2026: null },
+  { month: 'Авг', y2025: 22.1, y2026: null },
+  { month: 'Сен', y2025: 24.0, y2026: null },
+  { month: 'Окт', y2025: 25.2, y2026: null },
+  { month: 'Ноя', y2025: 23.6, y2026: null },
+  { month: 'Дек', y2025: 26.4, y2026: null },
 ]
 
 // Forecast data
@@ -425,6 +440,66 @@ export function FinanceContent() {
               />
             </ComposedChart>
           </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Year-over-Year Chart */}
+      <div className="bg-white rounded-xl border border-[var(--neutral-300)] p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="font-display text-lg font-semibold text-[var(--neutral-900)]">
+              Год к году — доходы
+            </h2>
+            <p className="text-sm text-[var(--neutral-600)] mt-0.5">Сравнение с 2025 годом по месяцам</p>
+          </div>
+          <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full" style={{ background: '#CBD5E1' }} />
+              <span className="text-[var(--neutral-600)]">2025</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-[var(--dia-green-600)]" />
+              <span className="text-[var(--neutral-600)]">2026</span>
+            </div>
+          </div>
+        </div>
+        <div className="h-[220px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={yoyData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#EDF0EE" vertical={false} />
+              <XAxis
+                dataKey="month"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#6C7570', fontSize: 12, fontFamily: 'JetBrains Mono' }}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#6C7570', fontSize: 11, fontFamily: 'JetBrains Mono' }}
+                tickFormatter={(v) => `${v}M`}
+                width={36}
+              />
+              <Tooltip
+                contentStyle={{ backgroundColor: '#1A1F1C', border: 'none', borderRadius: '10px', padding: '10px 14px' }}
+                labelStyle={{ color: '#FAFBFA', fontWeight: 500, marginBottom: 4 }}
+                itemStyle={{ color: '#A3ABA5' }}
+                formatter={(v: number) => [`${v} млн ₸`, '']}
+              />
+              <Bar dataKey="y2025" name="2025" fill="#CBD5E1" radius={[4, 4, 0, 0]} maxBarSize={20} />
+              <Bar dataKey="y2026" name="2026" fill="#15824F" radius={[4, 4, 0, 0]} maxBarSize={20} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="mt-3 pt-3 border-t border-[var(--neutral-200)] flex items-center gap-6 text-sm">
+          <div>
+            <span className="text-[var(--neutral-600)]">Рост за 5 мес.: </span>
+            <span className="font-mono font-semibold text-[var(--dia-green-600)]">+16.8%</span>
+          </div>
+          <div>
+            <span className="text-[var(--neutral-600)]">Доп. выручка: </span>
+            <span className="font-mono font-semibold text-[var(--neutral-900)]">+17 500 000 ₸</span>
+          </div>
         </div>
       </div>
 

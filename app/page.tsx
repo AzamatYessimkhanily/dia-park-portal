@@ -1,14 +1,13 @@
-import { Sidebar }        from '@/components/dashboard/Sidebar'
-import { TopBar }         from '@/components/dashboard/TopBar'
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
-import { KpiRow }         from '@/components/dashboard/KpiRow'
-import { AiInsights }     from '@/components/dashboard/AiInsights'
-import { UrgentTasks }    from '@/components/dashboard/UrgentTasks'
-import { FinanceChart }   from '@/components/dashboard/FinanceChart'
-import { BuildingStatus } from '@/components/dashboard/BuildingStatus'
-import { StaffActivity }  from '@/components/dashboard/StaffActivity'
-import { EventsTimeline } from '@/components/dashboard/EventsTimeline'
-import { AppShell }       from '@/components/dashboard/AppShell'
+import { DashboardHeader }   from '@/components/dashboard/DashboardHeader'
+import { KpiRow }             from '@/components/dashboard/KpiRow'
+import { AiInsights }         from '@/components/dashboard/AiInsights'
+import { UrgentTasks }        from '@/components/dashboard/UrgentTasks'
+import { FinanceChart }       from '@/components/dashboard/FinanceChart'
+import { BuildingStatus }     from '@/components/dashboard/BuildingStatus'
+import { StaffActivity }      from '@/components/dashboard/StaffActivity'
+import { EventsTimeline }     from '@/components/dashboard/EventsTimeline'
+import { BuildingLiveStats }  from '@/components/dashboard/BuildingLiveStats'
+import { AppShell }           from '@/components/dashboard/AppShell'
 
 export default function DashboardPage() {
   return (
@@ -24,6 +23,7 @@ export default function DashboardPage() {
             <FinanceChart />
           </div>
           <div className="flex flex-col gap-5 min-w-0">
+            <BuildingLiveStats />
             <BuildingStatus />
             <StaffActivity />
             <EventsTimeline />

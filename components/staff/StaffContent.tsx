@@ -1,23 +1,22 @@
 'use client'
 
 import { useState } from 'react'
-import { 
+import {
   Search,
   Plus,
   Phone,
   Mail,
-  Calendar,
-  CheckCircle2,
-  Clock,
   AlertCircle,
   ChevronRight,
-  Filter,
   MoreHorizontal,
+  Wrench,
+  Sparkles,
+  Shield,
+  BriefcaseBusiness,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Progress } from '@/components/ui/progress'
 import { PageHeader } from '@/components/dashboard/PageHeader'
 
@@ -34,20 +33,78 @@ const staff = [
 
 const departments = ['Все', 'Администрация', 'Техническая служба', 'Клининг', 'Охрана']
 
-const departmentColors: Record<string, string> = {
-  'Администрация': 'var(--status-info-main)',
-  'Техническая служба': 'var(--status-warning-main)',
-  'Клининг': 'var(--dia-green-600)',
-  'Охрана': 'var(--neutral-600)',
+const deptConfig: Record<string, { color: string; bg: string; icon: React.ElementType }> = {
+  'Администрация': { color: '#1E6FE0', bg: '#E1ECFC', icon: BriefcaseBusiness },
+  'Техническая служба': { color: '#D89614', bg: '#FDF5DC', icon: Wrench },
+  'Клининг': { color: '#15824F', bg: '#DEF5E8', icon: Sparkles },
+  'Охрана': { color: '#6C7570', bg: '#EDF0EE', icon: Shield },
+}
+
+function DepartmentStats() {
+  const deptNames = Object.keys(deptConfig)
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      {deptNames.map((dept) => {
+        const members = staff.filter(s => s.department === dept)
+        const online = members.filter(s => s.status === 'online').length
+        const avgRating = Math.round(members.reduce((s, m) => s + m.rating, 0) / members.length)
+        const overdue = members.reduce((s, m) => s + m.tasks.overdue, 0)
+        const cfg = deptConfig[dept]
+        const Icon = cfg.icon
+
+        return (
+          <div
+            key={dept}
+            className="rounded-xl p-4"
+            style={{ background: cfg.bg, border: `1px solid ${cfg.color}33` }}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center"
+                style={{ background: cfg.color + '22' }}
+              >
+                <Icon size={16} strokeWidth={1.5} style={{ color: cfg.color }} />
+              </div>
+              <span
+                className="text-[10px] font-medium px-2 py-0.5 rounded-full"
+                style={{ background: '#fff', color: online > 0 ? '#15824F' : '#6C7570' }}
+              >
+                {online} онлайн
+              </span>
+            </div>
+            <p className="text-[13px] font-semibold mb-1" style={{ color: 'var(--neutral-900)' }}>
+              {dept}
+            </p>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-[22px] font-bold leading-none" style={{ color: cfg.color, fontFamily: 'var(--font-mono)' }}>
+                {members.length}
+              </span>
+              <span className="text-[11px]" style={{ color: 'var(--neutral-500)' }}>чел.</span>
+            </div>
+            <div className="flex items-center justify-between mt-2">
+              <span className="text-[11px]" style={{ color: 'var(--neutral-500)' }}>
+                Рейтинг: <span style={{ color: cfg.color, fontFamily: 'var(--font-mono)' }}>{avgRating}%</span>
+              </span>
+              {overdue > 0 && (
+                <span className="text-[10px] font-medium" style={{ color: 'var(--status-danger-main)' }}>
+                  {overdue} просроч.
+                </span>
+              )}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
 }
 
 export function StaffContent() {
-  const [activeTab, setActiveTab] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [activeDepartment, setActiveDepartment] = useState('Все')
 
   const filteredStaff = staff.filter(s => {
-    const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.role.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase())
+      || s.role.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesDepartment = activeDepartment === 'Все' || s.department === activeDepartment
     return matchesSearch && matchesDepartment
   })
@@ -76,12 +133,15 @@ export function StaffContent() {
         }
       />
 
+      {/* Department Stats */}
+      <DepartmentStats />
+
       {/* Filters */}
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-md">
           <Search size={16} strokeWidth={1.5} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--neutral-400)' }} />
-          <Input 
-            placeholder="Поиск по имени или должности..." 
+          <Input
+            placeholder="Поиск по имени или должности..."
             className="pl-9 h-10"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -109,86 +169,89 @@ export function StaffContent() {
       {/* Staff List */}
       <div className="dia-card overflow-hidden">
         <div className="divide-y" style={{ borderColor: 'var(--neutral-200)' }}>
-          {filteredStaff.map((person) => (
-            <div
-              key={person.id}
-              className="flex items-center gap-4 p-4 cursor-pointer transition-colors hover:bg-[var(--neutral-50)]"
-            >
-              <div className="relative">
-                <Avatar className="w-11 h-11">
-                  <AvatarFallback style={{ background: 'var(--dia-green-100)', color: 'var(--dia-green-700)', fontSize: 13, fontWeight: 600 }}>
-                    {person.initials}
-                  </AvatarFallback>
-                </Avatar>
-                <span 
-                  className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white"
-                  style={{ background: person.status === 'online' ? 'var(--status-success-main)' : 'var(--neutral-400)' }}
-                />
-              </div>
-              
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium" style={{ color: 'var(--neutral-900)' }}>{person.name}</span>
-                  <span 
-                    className="text-[10px] font-medium px-1.5 py-0.5 rounded"
-                    style={{ background: departmentColors[person.department] + '20', color: departmentColors[person.department] }}
-                  >
-                    {person.department}
-                  </span>
+          {filteredStaff.map((person) => {
+            const cfg = deptConfig[person.department]
+            return (
+              <div
+                key={person.id}
+                className="flex items-center gap-4 p-4 cursor-pointer transition-colors hover:bg-[var(--neutral-50)]"
+              >
+                <div className="relative">
+                  <Avatar className="w-11 h-11">
+                    <AvatarFallback style={{ background: cfg.bg, color: cfg.color, fontSize: 13, fontWeight: 600 }}>
+                      {person.initials}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span
+                    className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white"
+                    style={{ background: person.status === 'online' ? 'var(--status-success-main)' : 'var(--neutral-400)' }}
+                  />
                 </div>
-                <div className="text-sm mt-0.5" style={{ color: 'var(--neutral-500)' }}>{person.role}</div>
-              </div>
 
-              <div className="flex items-center gap-6 shrink-0">
-                {/* Tasks Progress */}
-                <div className="w-32">
-                  <div className="flex items-center justify-between text-xs mb-1">
-                    <span style={{ color: 'var(--neutral-500)' }}>Задачи</span>
-                    <span style={{ color: 'var(--neutral-700)', fontFamily: 'var(--font-mono)' }}>
-                      {person.tasks.completed}/{person.tasks.total}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium" style={{ color: 'var(--neutral-900)' }}>{person.name}</span>
+                    <span
+                      className="text-[10px] font-medium px-1.5 py-0.5 rounded"
+                      style={{ background: cfg.bg, color: cfg.color }}
+                    >
+                      {person.department}
                     </span>
                   </div>
-                  <Progress value={(person.tasks.completed / person.tasks.total) * 100} className="h-1.5" />
-                  {person.tasks.overdue > 0 && (
-                    <div className="text-[10px] mt-1 flex items-center gap-1" style={{ color: 'var(--status-danger-main)' }}>
-                      <AlertCircle size={10} strokeWidth={1.5} />
-                      {person.tasks.overdue} просрочено
+                  <div className="text-sm mt-0.5" style={{ color: 'var(--neutral-500)' }}>{person.role}</div>
+                </div>
+
+                <div className="flex items-center gap-6 shrink-0">
+                  {/* Tasks Progress */}
+                  <div className="w-32">
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <span style={{ color: 'var(--neutral-500)' }}>Задачи</span>
+                      <span style={{ color: 'var(--neutral-700)', fontFamily: 'var(--font-mono)' }}>
+                        {person.tasks.completed}/{person.tasks.total}
+                      </span>
                     </div>
-                  )}
-                </div>
-
-                {/* Rating */}
-                <div className="text-center w-16">
-                  <div 
-                    className="text-lg font-semibold"
-                    style={{ 
-                      color: person.rating >= 95 ? 'var(--status-success-main)' : 
-                             person.rating >= 85 ? 'var(--neutral-700)' : 'var(--status-warning-main)',
-                      fontFamily: 'var(--font-mono)'
-                    }}
-                  >
-                    {person.rating}%
+                    <Progress value={(person.tasks.completed / person.tasks.total) * 100} className="h-1.5" />
+                    {person.tasks.overdue > 0 && (
+                      <div className="text-[10px] mt-1 flex items-center gap-1" style={{ color: 'var(--status-danger-main)' }}>
+                        <AlertCircle size={10} strokeWidth={1.5} />
+                        {person.tasks.overdue} просрочено
+                      </div>
+                    )}
                   </div>
-                  <div className="text-[10px]" style={{ color: 'var(--neutral-500)' }}>рейтинг</div>
+
+                  {/* Rating */}
+                  <div className="text-center w-16">
+                    <div
+                      className="text-lg font-semibold"
+                      style={{
+                        color: person.rating >= 95 ? 'var(--status-success-main)' :
+                               person.rating >= 85 ? 'var(--neutral-700)' : 'var(--status-warning-main)',
+                        fontFamily: 'var(--font-mono)'
+                      }}
+                    >
+                      {person.rating}%
+                    </div>
+                    <div className="text-[10px]" style={{ color: 'var(--neutral-500)' }}>рейтинг</div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-1">
+                    <a href={`tel:${person.phone}`} className="p-2 rounded-lg hover:bg-[var(--neutral-100)] transition-colors">
+                      <Phone size={16} strokeWidth={1.5} style={{ color: 'var(--neutral-500)' }} />
+                    </a>
+                    <a href={`mailto:${person.email}`} className="p-2 rounded-lg hover:bg-[var(--neutral-100)] transition-colors">
+                      <Mail size={16} strokeWidth={1.5} style={{ color: 'var(--neutral-500)' }} />
+                    </a>
+                    <button className="p-2 rounded-lg hover:bg-[var(--neutral-100)] transition-colors">
+                      <MoreHorizontal size={16} strokeWidth={1.5} style={{ color: 'var(--neutral-500)' }} />
+                    </button>
+                  </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex items-center gap-1">
-                  <a href={`tel:${person.phone}`} className="p-2 rounded-lg hover:bg-[var(--neutral-100)] transition-colors">
-                    <Phone size={16} strokeWidth={1.5} style={{ color: 'var(--neutral-500)' }} />
-                  </a>
-                  <a href={`mailto:${person.email}`} className="p-2 rounded-lg hover:bg-[var(--neutral-100)] transition-colors">
-                    <Mail size={16} strokeWidth={1.5} style={{ color: 'var(--neutral-500)' }} />
-                  </a>
-                  <button className="p-2 rounded-lg hover:bg-[var(--neutral-100)] transition-colors">
-                    <MoreHorizontal size={16} strokeWidth={1.5} style={{ color: 'var(--neutral-500)' }} />
-                  </button>
-                </div>
+                <ChevronRight size={16} strokeWidth={1.5} style={{ color: 'var(--neutral-400)' }} />
               </div>
-
-              <ChevronRight size={16} strokeWidth={1.5} style={{ color: 'var(--neutral-400)' }} />
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </div>
